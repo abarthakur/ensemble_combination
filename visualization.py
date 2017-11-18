@@ -126,17 +126,45 @@ def plot_tsne_classifier_regions_2(ens,X,Y,k_val):
 	axes[1].set_title("Best Classifier")
 	plt.show()
 
+def plot_tsne_locality(ens,X,Y,k_for_means):
+	num_samples=X.shape[0]
+	num_classifiers=ens.num_classifiers
+	num_classes=ens.num_classes
+
+	DP_X_flat= np.zeros((num_samples,num_classifiers*num_classes))
+	true_labels=np.zeros(num_samples)
+
+	for i in range(0,num_samples):
+		DP=ens.get_profile(X[i,:])
+		DP_X_flat[i,:]=DP.reshape(num_classifiers*num_classes)
+		true_labels[i]=np.argmax(Y[i,:])
+
+	#cluster DP_X_flat
+	kmeans = KMeans(n_clusters=k_for_means, random_state=0).fit(DP_X_flat)
+	labels=kmeans.labels_
+	X_embedded=TSNE(n_components=2).fit_transform(X)
+	x_0 = X_embedded[:,0]
+	x_1 = X_embedded[:,1]
+	fig, axes = plt.subplots(nrows=1, ncols=2)
+	axes[0].scatter(x_0,x_1,s=8,c=true_labels,alpha=0.5)
+	axes[0].set_title("True Class Labels")
+	axes[0].legend()
+	axes[1].scatter(x_0,x_1,s=8,c=labels,alpha=0.5)
+	axes[1].set_title("Cluster Labels in DP Space")
+	# axes[1].legend()
+	plt.show()
 
 
 # trainX, trainY = get_sat_data("data/sat.trn")
 # testX, testY = get_sat_data("data/sat.tst")
 # num_classes = trainY.shape[1]
 # permutation = np.random.permutation(trainX.shape[0])
-# # trainX=trainX[permutation[0:100],:]
-# # trainY=trainY[permutation[0:100],:]
+# trainX=trainX[permutation[0:100],:]
+# trainY=trainY[permutation[0:100],:]
 # # print(trainX.shape)
 # # quit()
 # ens = build_ensemble_kuncheva_sat(trainX,trainY,num_classes)
 # num_classifiers=ens.num_classifiers
 
-# plot_tsne_classifier_regions_2(ens,trainX,trainY,10)
+# # plot_tsne_classifier_regions_2(ens,trainX,trainY,10)
+# plot_tsne_locality(ens,trainX,trainY,15)
