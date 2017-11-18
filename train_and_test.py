@@ -65,7 +65,7 @@ def train_and_test_0(trainX,trainY,testX,testY,voting_choice=0,k_val=5):
 		if label==true_label:
 			correct+=1
 
-	accuracy=correct/tot_test
+	accuracy=float(correct)/float(tot_test)
 	print("Prediction rule 0")
 	print("Total test accuracy is :")
 	print(accuracy)
@@ -90,7 +90,7 @@ def train_and_test_1(ens,num_classifiers,num_classes,trainX,trainY,testX,testY):
 		if label==true_label:
 			correct+=1
 
-	accuracy=correct/tot_test
+	accuracy=float(correct)/float(tot_test)
 	print("Prediction rule 1")
 	print("Total test accuracy is :")
 	print(accuracy)
@@ -124,7 +124,7 @@ def train_and_test_2_1(ens,num_classifiers,num_classes,trainX,trainY,testX,testY
 		if label==true_label:
 			correct+=1
 
-	accuracy=correct/tot_test
+	accuracy=float(correct)/float(tot_test)
 	print("Prediction rule 2.1")
 	print("Total test accuracy is :")
 	print(accuracy)
@@ -189,7 +189,7 @@ def train_and_test_3(ens,num_classifiers,num_classes,trainX,trainY,testX,testY,k
 		if label==true_label:
 			correct+=1
 
-	accuracy=correct/tot_test
+	accuracy=float(correct)/float(tot_test)
 	print("Prediction rule 3")
 	print("Total test accuracy is :")
 	print(accuracy)
@@ -283,7 +283,7 @@ def train_and_test_oracle(ens,num_classifiers,num_classes,trainX,trainY,testX,te
 			# print(correct)
 
 
-	accuracy=correct/tot_test
+	accuracy=float(correct)/float(tot_test)
 	print("Oracle :")
 	print("Total test accuracy is :")
 	print(accuracy)
