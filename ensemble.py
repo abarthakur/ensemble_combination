@@ -1,6 +1,7 @@
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
+import math
 
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
