@@ -1,6 +1,7 @@
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.models import model_from_json # need python-h5py (or python3-h5py) installed for this
 import math
 
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
@@ -44,10 +45,9 @@ class KerasClassifier :
 
 
 #build ensemble
-def build_ensemble_1(trainX,trainY,num_classes,epochs):
+def build_ensemble_1(trainX,trainY,num_classes,epochs,num_classifiers=10,save=0,save_folder=''):
 	###############Build ensemble of MLPs with bagging (sort of)#####################
 	ens = Ensemble(num_classes)
-	num_classifiers=10
 	half=int(num_classifiers/2)
 
 	#employ bagging
@@ -66,6 +66,10 @@ def build_ensemble_1(trainX,trainY,num_classes,epochs):
 		model1.compile(loss="categorical_crossentropy", optimizer="adam", metrics=['accuracy'])
 		model1.fit(tX_part,tY_part, epochs=epochs, batch_size=10) # epochs=150
 
+		if(save):
+			save_model_to_file(model1,i,save_folder)
+			print("Saved model to disk")
+
 		ens.add_classifier(KerasClassifier(model1,num_classes))
 
 	#NN with 2 hidden layers x 5
@@ -80,9 +84,43 @@ def build_ensemble_1(trainX,trainY,num_classes,epochs):
 		model2.compile(loss="categorical_crossentropy", optimizer="adam", metrics=['accuracy'])
 		model2.fit(tX_part, tY_part, epochs=epochs, batch_size=10) # epochs=150
 
+		if(save):
+			save_model_to_file(model2,i,save_folder)
+			print("Saved model to disk")
+
 		ens.add_classifier(KerasClassifier(model2,num_classes))
 	#################################################################3
 	return ens
+
+
+#build ensemble - load models from file
+def build_ensemble_from_file(num_classifiers,num_classes,folder_name):
+	ens = Ensemble(num_classes)
+	# num_classifiers=10
+	half=int(num_classifiers/2)
+
+	for i in range(num_classifiers):
+		filename = 'saved_models/'+folder_name+'/'+str(i)
+		json_file = open(filename+'.json', 'r')
+		loaded_model_json = json_file.read()
+		json_file.close()
+		loaded_model = model_from_json(loaded_model_json) # need python-h5py (or python3-h5py) installed for this
+		# load weights into new model
+		loaded_model.load_weights(filename+'.h5')
+
+		ens.add_classifier(KerasClassifier(loaded_model,num_classes))
+	print("Loaded models from disk")
+
+	return ens
+
+
+def save_model_to_file(model,id,folder_name):
+	filename = 'saved_models/'+folder_name+'/'+str(id)
+	model_json = model.to_json()
+	with open(filename+'.json', "w") as json_file:
+		json_file.write(model_json)
+	model.save_weights(filename+'.h5')
+
 
 #not sure this is necessary yet, but oh well
 class QDCClassifier :
