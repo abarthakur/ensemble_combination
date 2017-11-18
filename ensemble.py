@@ -53,7 +53,7 @@ def build_ensemble_1(trainX,trainY,num_classes,epochs,num_classifiers=10,save=0,
 	#employ bagging
 	total_samples = trainX.shape[0]
 	max_samples = (total_samples/2)
-	max_samples=math.ceil(max_samples)
+	max_samples=int(math.ceil(max_samples))
 
 	#NN with single hidden layer,trained on all features x 5
 	for i in range(0,half):
