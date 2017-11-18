@@ -1,7 +1,7 @@
 from sklearn.manifold import TSNE
 import numpy as np
 import matplotlib.pyplot as plt
-
+from train_and_test import *
 from ensemble import *
 from data import *
 
@@ -142,7 +142,10 @@ def plot_tsne_locality(ens,X,Y,k_for_means):
 	#cluster DP_X_flat
 	kmeans = KMeans(n_clusters=k_for_means, random_state=0).fit(DP_X_flat)
 	labels=kmeans.labels_
-	X_embedded=TSNE(n_components=2).fit_transform(X)
+	if X.shape[1] > 2:
+		X_embedded=TSNE(n_components=2).fit_transform(X)
+	else:
+		X_embedded = X
 	x_0 = X_embedded[:,0]
 	x_1 = X_embedded[:,1]
 	fig, axes = plt.subplots(nrows=1, ncols=2)
@@ -155,16 +158,20 @@ def plot_tsne_locality(ens,X,Y,k_for_means):
 	plt.show()
 
 
-# trainX, trainY = get_sat_data("data/sat.trn")
-# testX, testY = get_sat_data("data/sat.tst")
+# trainX, trainY = get_synthetic_data("generated_data/sine.trn")
+# testX, testY = get_synthetic_data("generated_data/sine.tst")
 # num_classes = trainY.shape[1]
 # permutation = np.random.permutation(trainX.shape[0])
-# trainX=trainX[permutation[0:100],:]
-# trainY=trainY[permutation[0:100],:]
-# # print(trainX.shape)
-# # quit()
-# ens = build_ensemble_kuncheva_sat(trainX,trainY,num_classes)
-# num_classifiers=ens.num_classifiers
+# # trainX=trainX[permutation[0:100],:]
+# # trainY=trainY[permutation[0:100],:]
+# # # print(trainX.shape)
+# # # quit()
+# # ens = build_ensemble_1(trainX,trainY,num_classes,epochs=20,num_classifiers=10,save=1,save_folder='sine')
+# # num_classifiers=ens.num_classifiers
+# # train_and_test_2_1(ens,num_classifiers,num_classes,trainX,trainY,testX,testY,k_val=10)
+# # train_and_test_3(ens,num_classifiers,num_classes,trainX,trainY,testX,testY,k_val=10)
+# # train_and_test_oracle(ens,num_classifiers,num_classes,trainX,trainY,testX,testY)
+# # train_and_test_single_best(ens,num_classifiers,num_classes,trainX,trainY,testX,testY)
 
-# # plot_tsne_classifier_regions_2(ens,trainX,trainY,10)
-# plot_tsne_locality(ens,trainX,trainY,15)
+# plot_tsne_locality(ens,trainX,trainY,5)
+# plot_tsne_classifier_regions_2(ens,trainX,trainY,10)
