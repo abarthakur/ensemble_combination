@@ -260,3 +260,57 @@ def train_and_test_4(ens,num_classifiers,num_classes,trainX,trainY,testX,testY,k
 	print("Total test accuracy is :")
 	print(accuracy)
 	return accuracy
+
+####Oracle baseline : The oracle is correct if any of the classifiers in the ensemble correctly guess the label
+def train_and_test_oracle(ens,num_classifiers,num_classes,trainX,trainY,testX,testY):
+	#predict
+	tot_test=testX.shape[0]
+	correct=0
+
+	for i in range(0,tot_test):
+		sample=testX[i]
+		DP= ens.get_profile(sample)
+		predictions = np.argmax(DP,axis=1)
+		# print(predictions)
+		# break
+		true_label=np.argmax(testY[i])
+		# print(true_label)
+		# print(predictions==true_label)
+		predictions=predictions==true_label
+		predictions=predictions.astype(int)
+		if np.max(predictions)==1:
+			correct+=1
+			# print(correct)
+
+
+	accuracy=correct/tot_test
+	print("Oracle :")
+	print("Total test accuracy is :")
+	print(accuracy)
+	return accuracy
+
+####Single best classifier baseline : Returns the accuracy of the single best classifier in the ensemble
+def train_and_test_single_best(ens,num_classifiers,num_classes,trainX,trainY,testX,testY):
+	#predict
+	tot_test=testX.shape[0]
+	correct=np.zeros(num_classifiers)
+
+	for i in range(0,tot_test):
+		sample=testX[i]
+		DP= ens.get_profile(sample)
+		predictions = np.argmax(DP,axis=1)
+		# print(predictions)
+		# break
+		true_label=np.argmax(testY[i])
+		# print(predictions==true_label)
+		predictions=predictions==true_label
+		predictions=predictions.astype(int)
+		correct=correct + predictions
+
+	winner=np.argmax(correct)
+	max_correct=correct[winner]
+	accuracy=max_correct/tot_test
+	print("Single best classifier is classifier "+str(winner))
+	print("Total test accuracy is :")
+	print(accuracy)
+	return accuracy
